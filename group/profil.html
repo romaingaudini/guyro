@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Mon Profil - BNP Paribas</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 0;
+            color: #2b3a4a;
+            overflow-x: hidden;
+        }
+
+        /* 🟢 BANDEAU SUPÉRIEUR CONFIGURÉ COMME L'IMAGE */
+        .top-navbar {
+            background-color: #006643; /* Vert officiel BNP */
+            color: #ffffff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .burger-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.6em;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .brand-title {
+            font-weight: bold;
+            font-size: 1.05em;
+            letter-spacing: 0.5px;
+        }
+        .brand-subtitle {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .lock-icon {
+            font-size: 1.1em;
+        }
+
+        /* En-tête avec Logo de la Banque */
+        .bank-logo-banner {
+            background: white;
+            margin: 20px auto 0;
+            max-width: 1200px;
+            width: calc(100% - 40px);
+            padding: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #e1e6eb;
+        }
+        .bank-logo-banner img {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        /* Onglets de Navigation */
+        .tabs-container {
+            max-width: 1200px;
+            margin: 15px auto 0;
+            width: calc(100% - 40px);
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .tab-link {
+            flex: 1;
+            text-align: center;
+            padding: 12px 10px;
+            text-decoration: none;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+        }
+        .tab-link:hover {
+            background: #f1f5f9;
+            color: #006643;
+        }
+        .tab-link.active {
+            background: white;
+            color: #006643;
+            box-shadow: inset 0 -3px 0 #006643;
+        }
+
+        /* Layout Principal */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media (min-width: 992px) {
+            .main-wrapper {
+                flex-direction: row;
+            }
+        }
+
+        /* 📌 SLIDE MENU LATÉRAL */
+        aside.side-nav {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1e6eb;
+            height: fit-content;
+            transition: transform 0.3s ease;
+        }
+        @media (max-width: 991px) {
+            aside.side-nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 280px;
+                height: 100%;
+                z-index: 9999;
+                border-radius: 0;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.15);
+                transform: translateX(-100%);
+            }
+            aside.side-nav.open {
+                transform: translateX(0);
+            }
+        }
+        @media (min-width: 992px) {
+            aside.side-nav {
+                flex: 1;
+                transform: none !important;
+            }
+        }
+
+        .close-menu-btn {
+            display: none;
+            background: #f1f5f9;
+            border: none;
+            color: #006643;
+            font-weight: bold;
+            padding: 10px;
+            width: 100%;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        @media (max-width: 991px) {
+            .close-menu-btn { display: block; }
+        }
+
+        aside.side-nav h4 {
+            margin-top: 0;
+            color: #006643;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 8px;
+            font-size: 1em;
+        }
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .nav-caption {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .nav-item {
+            text-decoration: none;
+            color: #334155;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            color: #006643;
+        }
+        .nav-item.active {
+            background-color: #006643;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Zone de Contenu Profil */
+        section.profile-section {
+            flex: 2.8;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1e6eb;
+            overflow: hidden;
+        }
+        .profile-title-bar {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eef2f5;
+            background-color: #fafbfc;
+        }
+        .profile-content-body {
+            padding: 25px;
+        }
+        .profile-section-heading {
+            font-weight: bold;
+            color: #006643;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grille des Éléments d'Information */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        @media (min-width: 640px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .info-tile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .info-tile-icon {
+            font-style: normal;
+            font-size: 1.3em;
+            background: #e6f3ed;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #006643;
+        }
+        .info-tile-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-tile-details strong {
+            font-size: 0.8em;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .info-tile-details span {
+            font-size: 0.95em;
+            color: #1e293b;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .profile-disclaimer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eef2f5;
+            font-size: 0.85em;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Colonne Droite (Actions Rapides) */
+        aside.actions-rail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .action-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1e6eb;
+        }
+        .action-card h4 {
+            margin-top: 0;
+            color: #006643;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 8px;
+            font-size: 0.95em;
+        }
+        .action-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .action-card ul li a {
+            text-decoration: none;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+        .action-card ul li a:hover {
+            color: #006643;
+        }
+
+        /* Overlay */
+        .menu-dimmer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9998;
+        }
+        .menu-dimmer.active { display: block; }
+
+        .footer-copyright {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.8em;
+            border-top: 1px solid #cbd5e1;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu-dimmer" id="menuOverlay"></div>
+
+<!-- 🟢 1. BARRE DE NAVIGATION SUPÉRIEURE -->
+<div class="top-navbar">
+    <div class="navbar-left">
+        <button class="burger-btn" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+        <div class="brand-info">
+            <span class="brand-title">BNP PARIBAS</span>
+            <span class="brand-subtitle">Mon Espace</span>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <span class="lock-icon">🔒</span>
+        <span id="navUserName">CHARGEMENT...</span>
+    </div>
+</div>
+
+<!-- 🟢 2. BANNER LOGO CENTRALISÉ -->
+<div class="bank-logo-banner">
+    <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas">
+</div>
+
+<!-- 🟢 3. ONGLETS DE NAVIGATION DE L'ESPACE CLIENT -->
+<div class="tabs-container">
+    <a class="tab-link" href="ajouter-beneficiaire.html">Beneficiaire</a>
+    <a class="tab-link active" href="profil.html">Profil</a>
+    <a class="tab-link" href="virement.html">Virement</a>
+    <a class="tab-link" href="rib.html">Mon Rib</a>
+    <a class="tab-link" href="dashboard.html">Comptes et services</a>
+</div>
+
+<!-- 🟢 4. CONTAINER PRINCIPAL -->
+<div class="main-wrapper">
+
+    <!-- MENU LATÉRAL -->
+    <aside class="side-nav" id="sideMenu">
+        <button class="close-menu-btn" id="closeMenu">✕ Fermer le menu</button>
+
+        <h4>Navigation</h4>
+        <div class="nav-group">
+            <a class="nav-item active" href="profil.html">Mon profil</a>
+            <a class="nav-item" href="dashboard.html">Consultation des comptes</a>
+            <a class="nav-item" href="rib.html">Impression RIB</a>
+        </div>
+
+        <div class="nav-caption">Virements / Prélèvements</div>
+        <div class="nav-group">
+            <a class="nav-item" href="virement.html">Passer un virement</a>
+            <a class="nav-item" href="historique.html">Historique des Opérations</a>
+        </div>
+
+        <div class="nav-caption">Services et contrats</div>
+        <div class="nav-group">
+            <a class="nav-item" href="mes-cartes.html">Mes cartes</a>
+        </div>
+
+        <div class="nav-group admin-link" style="display:none;">
+            <a class="nav-item" href="manage.html" style="background-color: #d97706; color: white; text-align: center; font-weight: bold;">PANNEAU ADMIN</a>
+        </div>
+    </aside>
+
+    <!-- ZONE DE CONTENU CENTRAL -->
+    <section class="profile-section">
+        <div class="profile-title-bar">
+            <h2 style="margin:0; font-size:20px; color: #006643;">Mon Profil</h2>
+            <p style="margin:4px 0 0; color:#64748b; font-size:13px;">
+                Gestion de vos informations personnelles et identifiants sécurisés.
+            </p>
+        </div>
+
+        <div class="profile-content-body">
+            <div class="profile-section-heading">
+                <span>📋</span> Informations de contact et d'identification
+            </div>
+
+            <div class="info-grid">
+                <div class="info-tile">
+                    <div class="info-tile-icon">👤</div>
+                    <div class="info-tile-details">
+                        <strong>Titulaire</strong>
+                        <span id="profileName">M LARSSON ERIK</span>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-tile-icon">🔑</div>
+                    <div class="info-tile-details">
+                        <strong>Code Client</strong>
+                        <span id="clientCode">---</span>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-tile-icon">📞</div>
+                    <div class="info-tile-details">
+                        <strong>Téléphone</strong>
+                        <span id="profilePhone">---</span>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-tile-icon">✉️</div>
+                    <div class="info-tile-details">
+                        <strong>Email</strong>
+                        <span id="profileEmail">---</span>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-tile-icon">📍</div>
+                    <div class="info-tile-details">
+                        <strong>Adresse</strong>
+                        <span id="profileAddress">---</span>
+                    </div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-tile-icon">👔</div>
+                    <div class="info-tile-details">
+                        <strong>Conseiller</strong>
+                        <span id="profileAdvisor">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-disclaimer">
+                ⚠️ Pour toute modification de vos données réglementaires ou de votre adresse de domiciliation, veuillez contacter directement votre conseiller ou vous rendre en agence muni d'un justificatif de moins de 3 mois.
+            </div>
+        </div>
+    </section>
+
+    <!-- RAIL DROIT -->
+    <aside class="actions-rail">
+        <div class="action-card">
+            <h4>Contacter mon Conseiller</h4>
+            <ul>
+                <li><a href="#"><span>✉️</span> Écrire un message</a></li>
+                <li><a href="#"><span>📅</span> Prendre Rendez-vous</a></li>
+                <li><a href="#"><span>📞</span> Par téléphone</a></li>
+            </ul>
+        </div>
+        <div class="action-card" style="text-align: center; padding: 15px;">
+            <a href="#" onclick="logout()" style="color: #dc2626; font-weight: bold; text-decoration: none; font-size: 0.9em;">👋 SE DÉCONNECTER</a>
+        </div>
+    </aside>
+
+</div>
+
+<div class="footer-copyright">
+     BNP PARIBAS - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France | Sécurité garantie par authentification forte.
+</div>
+
+<!-- SDK FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="shared.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    // Logic Slide Menu
+    const menuToggle = document.getElementById("menuToggle");
+    const closeMenu = document.getElementById("closeMenu");
+    const sideMenu = document.getElementById("sideMenu");
+    const menuOverlay = document.getElementById("menuOverlay");
+
+    function openSlideMenu() {
+        sideMenu.classList.add("open");
+        menuOverlay.classList.add("active");
+    }
+    function closeSlideMenu() {
+        sideMenu.classList.remove("open");
+        menuOverlay.classList.remove("active");
+    }
+
+    menuToggle.addEventListener("click", openSlideMenu);
+    closeMenu.addEventListener("click", closeSlideMenu);
+    menuOverlay.addEventListener("click", closeSlideMenu);
+
+    // Initialisation Données depuis Firebase
+    try {
+        if (typeof getAllUsers === "function") await getAllUsers();
+    } catch(e) {
+        console.warn("Erreur ou absence de la fonction getAllUsers()");
+    }
+
+    const user = typeof loadCurrentUser === "function" ? loadCurrentUser() : null;
+
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    // 💡 FORCE L'INJECTION DE LA VALEUR DYNAMIQUE DIRECTEMENT DEPUIS LA VARIABLE DE SESSION
+    const nameDisplay = (user.name || "M LARSSON ERIK").toUpperCase();
+    
+    document.getElementById("profileName").textContent = nameDisplay;
+    document.getElementById("navUserName").textContent = nameDisplay;
+    
+    document.getElementById("clientCode").textContent   = user.clientCode || "---";
+    document.getElementById("profilePhone").textContent   = user.phone || "Non renseigné";
+    document.getElementById("profileEmail").textContent   = user.email || "Non renseigné";
+    document.getElementById("profileAddress").textContent = user.address || "15, place de l’église 78110, le Vesinet";
+    document.getElementById("profileAdvisor").textContent = user.advisor || "M. Nicolas BAUDOUIN";
+
+    if (user.isAdmin) {
+        const adminLink = document.querySelector(".admin-link");
+        if (adminLink) adminLink.style.display = "block";
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Portail - Connexion</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRacOgx5WyHqhD6RU5uO9Tv3-9RLPjwVjY3_A&s">
+</head>
+<body class="flex min-h-full items-center justify-center p-4 bg-cover bg-center bg-no-repeat antialiased" style="background-image: url('https://moneyradar.org/wp-content/uploads/2025/09/Banque-BNP-Paribas-Avis.webp');">
+
+    <!-- 📦 BLOC DE CONNEXION CAISSE MOBILE -->
+    <div class="w-full max-w-sm rounded-3xl bg-white/95 p-6 shadow-2xl backdrop-blur-md border border-white/20 flex flex-col items-center">
+        
+        <!-- Logo de la banque -->
+        <div class="mb-3 drop-shadow-sm">
+            <img src="https://static.vecteezy.com/system/resources/previews/069/864/356/non_2x/bnp-paribas-bank-logo-transparent-rounded-square-financial-icon-free-png.png" alt="Logo BNP Paribas" class="h-20 w-20 object-contain">
+        </div>
+
+        <!-- Badges & Titres -->
+        <div class="inline-block rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold tracking-wider text-emerald-700 uppercase mb-2">
+            Portail sécurisé
+        </div>
+        
+        <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">BNP PARIBAS</h1>
+        <h2 class="text-xs font-semibold text-slate-500 mt-0.5 mb-6">Connexion espace client</h2>
+
+        <!-- 📑 FORMULAIRE DE CONNEXION -->
+        <form id="login-form" class="w-full space-y-4">
+            
+            <!-- Champ Code Client -->
+            <div class="relative flex items-center">
+                <span class="material-icons absolute left-3 text-slate-400 text-lg">account_circle</span>
+                <input 
+                    type="text" 
+                    id="clientCode" 
+                    placeholder="Code Client" 
+                    required 
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-emerald-600 focus:bg-white focus:ring-1 focus:ring-emerald-600 transition-all font-medium"
+                />
+            </div>
+
+            <!-- Champ Code PIN Seccurisé -->
+            <div class="relative flex items-center">
+                <span class="material-icons absolute left-3 text-slate-400 text-lg">lock</span>
+                <input 
+                    type="password" 
+                    id="pin" 
+                    placeholder="Code Secret (PIN)" 
+                    required 
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-emerald-600 focus:bg-white focus:ring-1 focus:ring-emerald-600 transition-all tracking-widest font-bold"
+                />
+            </div>
+
+            <!-- Message d'erreur dynamique -->
+            <div id="login-error" class="hidden items-center space-x-1.5 rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-600 border border-red-100">
+                <span class="material-icons text-sm shrink-0">error_outline</span>
+                <span id="error-text">Identifiants invalides</span>
+            </div>
+
+            <!-- Bouton d'action principal -->
+            <button 
+                type="submit" 
+                class="w-full rounded-xl bg-emerald-700 py-3.5 text-center text-sm font-bold text-white shadow-md active:bg-emerald-800 focus:outline-none transition-colors tracking-wide uppercase mt-2"
+            >
+                Se connecter
+            </button>
+        </form>
+
+        <!-- Sécurité avertissement bas de page -->
+        <p class="mt-6 text-[10px] text-center leading-relaxed text-slate-400 font-medium">
+            🔒 Ne communiquez jamais votre code secret à un tiers.
+        </p>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 🗄️ FIREBASE SCRIPTS (Identiques à l'original) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="shared.js"></script>
+
+    <!-- 🛠️ LOGIQUE JAVASCRIPT RESTRUCTURÉE -->
+    <script>
+    document.getElementById("login-form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const clientCode = document.getElementById("clientCode").value.trim();
+        const pin = document.getElementById("pin").value.trim();
+        const errorContainer = document.getElementById("login-error");
+        const errorText = document.getElementById("error-text");
+
+        // Masquer l'erreur au début d'une tentative
+        errorContainer.classList.add("hidden");
+        errorContainer.classList.remove("flex");
+
+        try {
+            const users = await getAllUsers();
+            const user = users.find(u => u.clientCode === clientCode && u.pin === pin);
+
+            if (user) {
+                localStorage.setItem("currentUserCode", user.clientCode);
+                window.location.href = "dashboard.html";
+            } else {
+                errorText.textContent = "Identifiants invalides. Veuillez réessayer.";
+                errorContainer.classList.remove("hidden");
+                errorContainer.classList.add("flex");
+            }
+        } catch (err) {
+            errorText.textContent = "Erreur de connexion avec le serveur.";
+            errorContainer.classList.remove("hidden");
+            errorContainer.classList.add("flex");
+        }
+    });
+    </script>
+
+</body>
+</html>

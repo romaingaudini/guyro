@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title>BNP PARIBAS - Mon RIB</title>
+    <!-- Tailwind CSS v4 via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="h-full font-sans text-slate-800 antialiased selection:bg-emerald-500/30 flex flex-col overflow-x-hidden">
+
+    <!-- 📱 ANDROID TOP APP BAR -->
+    <header class="sticky top-0 z-40 flex h-16 w-full items-center justify-between bg-emerald-700 px-4 shadow-md text-white">
+        <div class="flex items-center space-x-4">
+            <!-- Bouton Menu Hamburger -->
+            <button id="menuBtn" class="flex h-10 w-10 items-center justify-center rounded-full active:bg-emerald-800 transition-colors" aria-label="Ouvrir le menu">
+                <span class="material-icons text-2xl">menu</span>
+            </button>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold tracking-wider uppercase opacity-90">BNP Paribas</span>
+                <span class="text-xs opacity-70">Identifiants Bancaires</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-emerald-300 text-sm">lock</span>
+            <span class="text-xs font-medium uppercase tracking-wider">Connecté</span>
+        </div>
+    </header>
+
+    <!-- 🚪 SLIDE MENU (ANDROID DRAWER LAYOUT) -->
+    <div id="drawerOverlay" class="fixed inset-0 z-50 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    
+    <aside id="drawer" class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out">
+        <!-- En-tête du Drawer -->
+        <div class="bg-emerald-800 p-6 text-white flex flex-col justify-end h-40 shadow-inner">
+            <div class="h-12 w-12 rounded-full bg-emerald-600 flex items-center justify-center mb-3 shadow-md">
+                <span class="material-icons text-2xl">account_circle</span>
+            </div>
+            <div class="font-medium text-sm truncate" id="drawerProfileName">---</div>
+            <div class="text-xs text-emerald-200 mt-0.5">Code Client : <span id="metaClientCode">---</span></div>
+        </div>
+
+        <!-- Navigation du Menu Drawer -->
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Espace Client</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="profil.html">
+                <span class="material-icons text-slate-400">person</span>
+                <span>Mon profil</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="dashboard.html">
+                <span class="material-icons text-slate-400">account_balance</span>
+                <span>Consultation</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 font-semibold" href="rib.html">
+                <span class="material-icons text-emerald-600">description</span>
+                <span>Impression RIB</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Virements & Suivi</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="virement.html">
+                <span class="material-icons text-slate-400">swap_horiz</span>
+                <span>Passer un virement</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="historique.html">
+                <span class="material-icons text-slate-400">history</span>
+                <span>Historique des Opérations</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Services et contrats</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="mes-cartes.html">
+                <span class="material-icons text-slate-400">credit_card</span>
+                <span>Mes cartes</span>
+            </a>
+
+            <!-- Lien Admin -->
+            <div class="admin-link hidden pt-2">
+                <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-amber-50 text-amber-800" href="manage.html">
+                    <span class="material-icons text-amber-600">admin_panel_settings</span>
+                    <span>ADMIN (Gestion)</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Pied du Drawer -->
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center justify-center space-x-2 py-2.5 rounded-xl border border-red-200 text-red-600 font-medium text-sm active:bg-red-50 transition-colors">
+                <span class="material-icons text-sm">logout</span>
+                <span>DÉCONNEXION</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 📊 MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 pb-12">
+        
+        <!-- Logo -->
+        <div class="flex items-center justify-center py-2 bg-white rounded-2xl shadow-sm border border-slate-100">
+            <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas" class="h-10 object-contain">
+        </div>
+
+        <!-- Titre principal de la vue -->
+        <div class="px-1 space-y-1">
+            <div class="text-lg font-bold text-slate-800 tracking-tight flex items-center space-x-2">
+                <span class="material-icons text-emerald-600">assigned_turn_in</span>
+                <span>Relevé d'Identité Bancaire</span>
+            </div>
+            <p class="text-xs italic text-slate-400 leading-relaxed">
+                Visualisez, copiez ou téléchargez vos coordonnées officielles pour vos virements et prélèvements SEPA.
+            </p>
+        </div>
+
+        <!-- 💳 CARTE RIB FORMALISÉE -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden relative">
+            
+            <!-- Filigrane décoratif bancaire -->
+            <div class="absolute -right-8 -top-8 text-slate-50 pointer-events-none select-none">
+                <span class="material-icons text-9xl">account_balance</span>
+            </div>
+
+            <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 px-4 py-3.5 text-white flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">shield</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">BNP PARIBAS • RIB</span>
+                </div>
+                <span class="material-icons text-emerald-300 text-lg animate-pulse">lock</span>
+            </div>
+            
+            <div class="divide-y divide-slate-100 relative z-10">
+                <!-- Titulaire -->
+                <div class="p-4">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Titulaire du compte</div>
+                    <div id="#" class="text-sm font-bold text-slate-800 mt-0.5 uppercase">M LARSSON ERIK</div>
+                </div>
+
+                <!-- IBAN (Mise en avant graphique avec possibilité de copie) -->
+                <div class="p-4 bg-emerald-50/40">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="text-[10px] font-bold text-emerald-800/70 uppercase tracking-wide">Numéro IBAN</div>
+                            <div id="#" class="text-sm font-mono font-bold tracking-tight text-emerald-900 mt-1 break-all select-all">FR76 30004 00320 00580641322 73</div>
+                        </div>
+                        <button onclick="copyIban()" class="p-1.5 rounded-lg bg-white shadow-sm border border-emerald-200 text-emerald-700 active:bg-emerald-100 shrink-0 ml-2 transition-colors" title="Copier l'IBAN">
+                            <span class="material-icons text-base">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grille compacte à deux colonnes pour les identifiants techniques -->
+                <div class="grid grid-cols-2 divide-x divide-slate-100">
+                    <div class="p-4">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Code BIC / SWIFT</div>
+                        <div id="ribBic" class="text-xs font-mono font-semibold text-slate-700 mt-0.5">BNPFRPPXXX</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Numéro de Compte</div>
+                        <div id="#" class="text-xs font-mono font-semibold text-slate-700 mt-0.5">00580641322</div>
+                    </div>
+                </div>
+
+                <!-- Établissement domiciliataire -->
+                <div class="p-4">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Banque / Domiciliation</div>
+                    <div class="text-xs font-medium text-slate-800 mt-0.5">BNP PARIBAS - Service Tiers Saisies </div>
+                </div>
+
+                <!-- Adresse liée au compte -->
+                <div class="p-4">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Adresse rattachée</div>
+                    <div id="#" class="text-xs font-medium text-slate-600 leading-normal mt-0.5 whitespace-pre-line"> 7-9 Piaoe Des Enar 28000 Chartres</div>
+                </div>
+            </div>
+
+            <!-- Bouton d'action principal -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100">
+                <button type="button" onclick="window.print()" class="flex w-full items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm shadow-sm transition-colors">
+                    <span class="material-icons text-lg">file_download</span>
+                    <span>Télécharger le RIB (PDF)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ℹ️ NOTE DE SÉCURITÉ -->
+        <div class="bg-amber-50 rounded-xl p-3 border border-amber-200/60 flex items-start space-x-3">
+            <span class="material-icons text-amber-600 text-lg shrink-0 mt-0.5">verified_user</span>
+            <p class="text-[11px] text-amber-800 leading-normal">
+                Ce document fait foi de Relevé d'Identité Bancaire certifié par votre établissement. Ne transmettez vos coordonnées qu'à des organismes de confiance ou via des mandats SEPA sécurisés.
+            </p>
+        </div>
+
+    </main>
+
+    <!-- 📌 FOOTNOTE -->
+    <footer class="w-full bg-slate-100 border-t border-slate-200 py-3 text-center text-[10px] text-slate-400 font-mono tracking-tight">
+       BNP PARIBAS - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- 🗄️ FIREBASE SCRIPTS (Inchangés) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="shared.js"></script>
+
+    <!-- 🛠️ LOGIQUE ET CAPTURE DES FLUX DE DONNÉES -->
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        // --- GESTION DU SLIDE MENU (DRAWER ANDROID) ---
+        const menuBtn = document.getElementById('menuBtn');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('drawerOverlay');
+
+        function toggleDrawer(open) {
+            if (open) {
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        menuBtn.addEventListener('click', () => toggleDrawer(true));
+        overlay.addEventListener('click', () => toggleDrawer(false));
+
+
+        // --- CHARGEMENT DES PARAMÈTRES FIREBASE ---
+        await getAllUsers();
+        const user = loadCurrentUser();
+
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Mapping des identifiants globaux (Top bar & Drawer)
+        document.getElementById("metaClientCode").textContent = user.clientCode;
+        document.getElementById("drawerProfileName").textContent = "M LARSSON ERIK" ;
+
+        // Remplissage de la fiche d'identité bancaire (RIB)
+        document.getElementById("ribHolderName").textContent = user.name;
+        document.getElementById("ribIban").textContent = user.rib || "FR76 3000 4000 0012 3456 7890 123";
+        document.getElementById("ribBic").textContent  = user.bic || "BNPAFRPPXXX";
+        document.getElementById("ribAddress").textContent = user.address || "Non renseignée";
+
+        // Dérivé du numéro informatique client pour affichage uniforme du N° Compte
+        document.getElementById("ribAccount").textContent = "0000" + user.clientCode.slice(-6) + "A";
+
+        // Vérification des privilèges administratifs
+        if (user.isAdmin) {
+            document.querySelectorAll(".admin-link").forEach(el => el.classList.remove('hidden'));
+        }
+    });
+
+    // Option utilitaire : Copie rapide de l'IBAN
+    function copyIban() {
+        const ibanText = document.getElementById("ribIban").textContent;
+        navigator.clipboard.writeText(ibanText);
+        alert("IBAN copié dans le presse-papiers !");
+    }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title>Mes Cartes</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Material Icons pour l'esthétique native Android -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="h-full font-sans text-slate-800 antialiased selection:bg-emerald-500/30 flex flex-col overflow-x-hidden">
+
+    <!-- 📱 ANDROID TOP APP BAR -->
+    <header class="sticky top-0 z-40 flex h-16 w-full items-center justify-between bg-emerald-700 px-4 shadow-md text-white">
+        <div class="flex items-center space-x-4">
+            <!-- Bouton Menu Hamburger -->
+            <button id="menuBtn" class="flex h-10 w-10 items-center justify-center rounded-full active:bg-emerald-800 transition-colors" aria-label="Ouvrir le menu">
+                <span class="material-icons text-2xl">menu</span>
+            </button>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold tracking-wider uppercase opacity-90">BNP Paribas</span>
+                <span class="text-xs opacity-70">Mes cartes</span>
+            </div>
+        </div>
+        
+        <!-- Indicateur Connexion -->
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-emerald-300 text-sm">lock</span>
+            <span id="userName" class="text-xs font-medium max-w-[100px] truncate">🔒 Connecté</span>
+        </div>
+    </header>
+
+    <!-- 🚪 SLIDE MENU (ANDROID DRAWER LAYOUT) -->
+    <div id="drawerOverlay" class="fixed inset-0 z-50 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    
+    <aside id="drawer" class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out">
+        <!-- En-tête du Drawer -->
+        <div class="bg-emerald-800 p-6 text-white flex flex-col justify-end h-40 shadow-inner">
+            <div class="h-12 w-12 rounded-full bg-emerald-600 flex items-center justify-center mb-3 shadow-md">
+                <span class="material-icons text-2xl">account_circle</span>
+            </div>
+            <div class="font-medium text-sm truncate" id="drawerProfileName">---</div>
+            <div class="text-xs text-emerald-200 mt-0.5">Code Client : <span id="clientCode">---</span></div>
+        </div>
+
+        <!-- Navigation du Menu -->
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Espace Client</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="profil.html">
+                <span class="material-icons text-slate-400">person</span>
+                <span>Mon profil</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="dashboard.html">
+                <span class="material-icons text-slate-400">account_balance</span>
+                <span>Consultation</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="rib.html">
+                <span class="material-icons text-slate-400">description</span>
+                <span>Impression RIB</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Virements & Suivi</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="virement.html">
+                <span class="material-icons text-slate-400">swap_horiz</span>
+                <span>Passer un virement</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="historique.html">
+                <span class="material-icons text-slate-400">history</span>
+                <span>Historique des Opérations</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Services et contrats</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 font-semibold" href="mes-cartes.html">
+                <span class="material-icons text-emerald-600">credit_card</span>
+                <span>Mes cartes</span>
+            </a>
+
+            <!-- Lien Admin -->
+            <div class="admin-link hidden pt-2">
+                <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-amber-50 text-amber-800" href="manage.html">
+                    <span class="material-icons text-amber-600">admin_panel_settings</span>
+                    <span>ADMIN (Gestion)</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Pied du Drawer -->
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center justify-center space-x-2 py-2.5 rounded-xl border border-red-200 text-red-600 font-medium text-sm active:bg-red-50 transition-colors">
+                <span class="material-icons text-sm">logout</span>
+                <span>DÉCONNEXION</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 📊 MAIN CONTENT (SCROLLABLE AREA) -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 pb-12">
+        
+        <!-- Logo -->
+        <div class="flex items-center justify-center py-2 bg-white rounded-2xl shadow-sm border border-slate-100">
+            <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas" class="h-10 object-contain">
+        </div>
+
+        <!-- Titre principal -->
+        <div class="px-1 space-y-1">
+            <div class="text-lg font-bold text-slate-800 tracking-tight flex items-center space-x-2">
+                <span class="material-icons text-emerald-600">credit_card</span>
+                <span>Ma carte BNP Paribas</span>
+            </div>
+            <p class="text-xs italic text-slate-400 leading-relaxed">
+                Gestion de votre moyen de paiement sécurisé dynamique.
+            </p>
+        </div>
+
+        <!-- 💳 COMPOSANT CARTE BANCAIRE REHAUSSÉ -->
+        <div id="virtualCard" class="relative mx-auto w-full max-w-[340px] h-52 rounded-2xl p-5 text-white flex flex-col justify-between shadow-xl overflow-hidden transition-all duration-300">
+            
+            <!-- Filigrane d'effet de verre brillant -->
+            <div class="absolute inset-0 bg-linear-to-tr from-white/0 via-white/5 to-white/20 pointer-events-none"></div>
+
+            <!-- Ligne supérieure (Type & Réseau) -->
+            <div class="flex items-center justify-between z-10">
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-75">Premier</span>
+                    <span class="text-xs font-mono tracking-wider opacity-60">BNP PARIBAS</span>
+                </div>
+                <div id="cardType" class="text-lg font-black tracking-tighter italic">VISA</div>
+            </div>
+
+            <!-- Puce électronique simulée -->
+            <div class="w-10 h-8 bg-amber-200/80 rounded-sm shadow-inner relative overflow-hidden z-10 border border-amber-300/30">
+                <div class="absolute inset-x-0 top-1/2 h-[1px] bg-amber-600/30"></div>
+                <div class="absolute inset-y-0 left-1/2 w-[1px] bg-amber-600/30"></div>
+            </div>
+
+            <!-- Numéro de carte structuré -->
+            <div id="cardNumber" class="text-lg text-center font-mono tracking-widest font-bold z-10 drop-shadow-md select-all my-1 text-slate-100">
+                **** **** **** ****
+            </div>
+
+            <!-- Bloc Bas (Titulaire + Expiration + Badge Statut) -->
+            <div class="flex items-end justify-between z-10">
+                <div class="flex flex-col min-w-0">
+                    <span class="text-[8px] uppercase tracking-wider opacity-50">Titulaire</span>
+                    <span id="cardHolder" class="text-xs font-semibold uppercase font-mono truncate max-w-[160px]">M LARSSON ERIK</span>
+                </div>
+                <div class="flex flex-col text-center">
+                    <span class="text-[8px] uppercase tracking-wider opacity-50">Valide fin</span>
+                    <span id="cardExpiry" class="text-xs font-mono font-semibold">09/28</span>
+                </div>
+                <!-- Statut de la carte encapsulé -->
+                <div id="cardStatusBadge" class="px-2 py-1 rounded-md text-[9px] font-bold tracking-wider uppercase shadow-xs">
+                    <span id="#"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" height="25" width="25"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🛠️ GRILLE DES ACTIONS DE LA CARTE -->
+        <div class="space-y-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Options de gestion</h3>
+            <div class="grid grid-cols-2 gap-3" id="actionGrid">
+                <!-- Injecté dynamiquement par JS -->
+            </div>
+        </div>
+
+        <!-- 📞 CONTACTS ET ASSISTANCE -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
+                <span class="material-icons text-sm">support_agent</span>
+                <span>Contacter mon Conseiller</span>
+            </h4>
+            <div class="grid grid-cols-1 gap-2">
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">email</span>
+                    <span class="text-xs font-medium text-slate-700">Écrire un message</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">calendar_month</span>
+                    <span class="text-xs font-medium text-slate-700">Prendre Rendez-vous</span>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 📌 FOOTNOTE -->
+    <footer class="w-full bg-slate-100 border-t border-slate-200 py-3 text-center text-[10px] text-slate-400 font-mono tracking-tight">
+         BNP PARIBAS - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- 🗄️ FIREBASE SCRIPTS (Inchangés) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="shared.js"></script>
+
+    <!-- 🛠️ INTERACTION JAVASCRIPT & LOGIQUE CARTE MOBILE -->
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        // --- GESTION DU SLIDE MENU (DRAWER ANDROID) ---
+        const menuBtn = document.getElementById('menuBtn');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('drawerOverlay');
+
+        function toggleDrawer(open) {
+            if (open) {
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        menuBtn.addEventListener('click', () => toggleDrawer(true));
+        overlay.addEventListener('click', () => toggleDrawer(false));
+
+
+        // --- CHARGEMENT DATA FIREBASE ---
+        await getAllUsers();
+        const user = loadCurrentUser();
+
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Configuration en-tête globale et drawer
+        document.getElementById("userName").textContent = "M LARSSON ERIK" ;
+        document.getElementById("drawerProfileName").textContent = "M LARSSON ERIK" ;
+        document.getElementById("clientCode").textContent = user.clientCode;
+
+        // Affichage du volet Admin si nécessaire
+        if (user.isAdmin) {
+            document.querySelectorAll(".admin-link").forEach(el => el.classList.remove('hidden'));
+        }
+
+        // --- APPARENCE ET TYPE DE CARTE BANCAIRE ---
+        const cardType = user.clientCode % 2 === 0 ? "VISA" : "MASTERCARD";
+        const virtualCard = document.getElementById("virtualCard");
+        const cardTypeLabel = document.getElementById("cardType");
+
+        // Application des dégradés premiums selon le réseau
+        if (cardType === "VISA") {
+            virtualCard.className = virtualCard.className + " bg-linear-to-br from-blue-700 via-blue-800 to-slate-900";
+            cardTypeLabel.textContent = "VISA";
+        } else {
+            virtualCard.className = virtualCard.className + " bg-linear-to-br from-red-700 via-rose-900 to-stone-900";
+            cardTypeLabel.textContent = "MASTERCARD";
+        }
+
+        // Numéro de carte formaté basé sur les derniers numéros de son code client
+        const secureDigits = user.clientCode.slice(-6);
+        document.getElementById("cardNumber").textContent = `5440 1089 56${secureDigits.substring(0,2)} ${secureDigits.substring(2,6)}`;
+
+        // Titulaire & Date de validité automatique
+        document.getElementById("cardHolder").textContent = user.name.toUpperCase();
+        const expiryYear = new Date().getFullYear() + 4;
+        document.getElementById("cardExpiry").textContent = `12/${expiryYear.toString().slice(-2)}`;
+
+        // --- STATUT ET ACTIONS ---
+        const isLocked = user.cardsLocked;
+        const statusText = document.getElementById("cardStatus");
+        const statusBadge = document.getElementById("cardStatusBadge");
+
+        if (isLocked) {
+            statusText.textContent = "Verrouillée";
+            statusBadge.className = statusBadge.className + " bg-red-500/30 text-red-200 border border-red-500/40";
+        } else {
+            statusText.textContent = "Active";
+            statusBadge.className = statusBadge.className + " bg-emerald-500/30 text-emerald-200 border border-emerald-500/40";
+        }
+
+        // Génération de la grille des actions
+        const actionGrid = document.getElementById("actionGrid");
+        const actions = [
+            { title: "Débloquer la carte", icon: "lock_open", disabled: !isLocked },
+            { title: "Modifier les plafonds", icon: "tune", disabled: isLocked }
+        ];
+
+        actions.forEach(action => {
+            const box = document.createElement("div");
+            
+            if (action.disabled) {
+                // Style inactif
+                box.className = "bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center text-center opacity-40 pointer-events-none select-none";
+            } else {
+                // Style interactif actif
+                box.className = "bg-white rounded-2xl p-4 border border-slate-100 flex flex-col items-center text-center shadow-xs active:bg-slate-50 transition-colors cursor-pointer";
+            }
+
+            box.innerHTML = `
+                <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-2">
+                    <span class="material-icons text-lg">${action.icon}</span>
+                </div>
+                <span class="text-xs font-bold text-slate-800 leading-tight">${action.title}</span>
+                <span class="text-[9px] text-slate-400 font-medium mt-1">Fonction simulée</span>
+            `;
+            actionGrid.appendChild(box);
+        });
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Virement - BNP Paribas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #eef2f5;
+      margin: 0;
+      padding: 0;
+      color: #2b3a4a;
+      overflow-x: hidden;
+    }
+    
+    /* 🟢 BANDEAU SUPÉRIEUR INTEGRÉ COMME L'IMAGE */
+    .top-navbar {
+      background-color: #006643; /* Vert officiel BNP */
+      color: #ffffff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .burger-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.6em;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-title {
+      font-weight: bold;
+      font-size: 1.05em;
+      letter-spacing: 0.5px;
+    }
+    .brand-subtitle {
+      font-size: 0.8em;
+      opacity: 0.8;
+    }
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .lock-icon {
+      font-size: 1.1em;
+    }
+
+    /* En-tête avec Logo centralisé */
+    .bank-logo-banner {
+      background: white;
+      margin: 20px auto 0;
+      max-width: 1200px;
+      width: calc(100% - 40px);
+      padding: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #e1e6eb;
+    }
+    .bank-logo-banner img {
+      height: 40px;
+      object-fit: contain;
+    }
+
+    /* Onglets de Navigation */
+    .tabs-container {
+      max-width: 1200px;
+      margin: 15px auto 0;
+      width: calc(100% - 40px);
+      display: flex;
+      background: #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .tab-link {
+      flex: 1;
+      text-align: center;
+      padding: 12px 10px;
+      text-decoration: none;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.95em;
+      transition: all 0.2s ease;
+    }
+    .tab-link:hover {
+      background: #f1f5f9;
+      color: #006643;
+    }
+    .tab-link.active {
+      background: white;
+      color: #006643;
+      box-shadow: inset 0 -3px 0 #006643;
+    }
+
+    /* Layout Principal */
+    .main-wrapper {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .main-wrapper {
+        flex-direction: row;
+      }
+    }
+
+    /* 📌 SLIDE MENU LATÉRAL */
+    aside.side-nav {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 240px;
+      height: 100%;
+      background: white;
+      padding: 30px 20px;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+      z-index: 999;
+      transition: left 0.3s ease;
+    }
+    aside.side-nav.open {
+      left: 0;
+    }
+    @media (min-width: 768px) {
+      aside.side-nav {
+        position: static;
+        flex: 1;
+        height: fit-content;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e1e6eb;
+      }
+    }
+
+    .close-menu-btn {
+      text-align: right;
+      font-size: 1.5em;
+      color: #dc2626;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+    @media (min-width: 768px) {
+      .close-menu-btn {
+        display: none;
+      }
+    }
+
+    aside.side-nav h4 {
+      margin-top: 0;
+      color: #006643;
+      border-bottom: 2px solid #eef2f5;
+      padding-bottom: 8px;
+      font-size: 1em;
+    }
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .nav-caption {
+      font-size: 0.8em;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .nav-item {
+      text-decoration: none;
+      color: #334155;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+    .nav-item:hover {
+      background-color: #f1f5f9;
+      color: #006643;
+    }
+    .nav-item.active {
+      background-color: #006643;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Voile d'ombrage mobile */
+    .menu-dimmer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 998;
+      display: none;
+    }
+    .menu-dimmer.active {
+      display: block;
+    }
+
+    /* Zone de contenu Virement */
+    section.content-section {
+      flex: 3;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e1e6eb;
+      overflow: hidden;
+    }
+    .content-title-bar {
+      padding: 20px 25px;
+      border-bottom: 1px solid #eef2f5;
+      background-color: #fafbfc;
+    }
+    .content-body {
+      padding: 25px;
+    }
+
+    /* Formulaire réaligné */
+    .transfer-container form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    @media (min-width: 600px) {
+      .transfer-container form {
+        grid-template-columns: 1fr 1fr;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    form label {
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+      font-size: 0.88em;
+    }
+    form input {
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95em;
+      color: #1e293b;
+      transition: all 0.2s;
+    }
+    form input:focus {
+      border-color: #006643;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,102,67,0.1);
+    }
+    
+    /* Boutons de validation aux couleurs BNP */
+    .form-actions {
+      grid-column: span 2;
+      text-align: right;
+      margin-top: 15px;
+      border-top: 1px solid #eef2f5;
+      padding-top: 15px;
+    }
+    button.btn-primary {
+      padding: 12px 30px;
+      background-color: #006643;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    button.btn-primary:hover {
+      background-color: #004d32;
+    }
+    
+    .status-msg {
+      grid-column: span 2;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding: 20px;
+      color: #94a3b8;
+      font-size: 0.8em;
+      border-top: 1px solid #cbd5e1;
+      margin-top: 30px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="menu-dimmer" id="menuOverlay"></div>
+
+<!-- 🟢 1. BARRE DE NAVIGATION SUPÉRIEURE -->
+<div class="top-navbar">
+  <div class="navbar-left">
+    <button class="burger-btn" id="openMenuBtn" type="button">☰</button>
+    <div class="brand-info">
+      <span class="brand-title">BNP PARIBAS</span>
+      <span class="brand-subtitle">Mon Espace</span>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <span class="lock-icon">🔒</span>
+    <span id="userWelcome">BIENVENUE...</span>
+  </div>
+</div>
+
+<!-- 🟢 2. BANNER LOGO CENTRALISÉ -->
+<div class="bank-logo-banner">
+  <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas">
+</div>
+
+<!-- 🟢 3. ONGLETS DE NAVIGATION -->
+<div class="tabs-container">
+    <a class="tab-link" href="ajouter-beneficiaire.html">Beneficiaire</a>
+    <a class="tab-link" href="dashboard.html">Comptes et services</a>
+    <a class="tab-link active" href="virement.html">Virement</a>
+    <a class="tab-link" href="rib.html">Mon Rib</a>
+    <a class="tab-link" href="profil.html">Profil</a>
+</div>
+
+<!-- 🟢 4. STRUCTURE DE LA PAGE AVEC LE FORMULAIRE -->
+<div class="main-wrapper">
+
+    <!-- SLIDE MENU LATÉRAL -->
+    <aside class="side-nav" id="sideMenu">
+      <div class="close-menu-btn" id="closeMenuBtn">&times; Fermer le menu</div>
+      <h4>Navigation</h4>
+      <div class="nav-group">
+        <a class="nav-item" href="profil.html">Mon profil</a>
+        <a class="nav-item" href="dashboard.html">Consultation des comptes</a>
+        <a class="nav-item" href="rib.html">Impression RIB</a>
+      </div>
+
+      <div class="nav-caption">Virements / Prélèvements</div>
+      <div class="nav-group">
+        <a class="nav-item active" href="virement.html">Passer un virement</a>
+        <a class="nav-item" href="historique.html">Historique des Opérations</a>
+      </div>
+
+      <div class="nav-group admin-link" style="display:none;">
+        <a class="nav-item" href="manage.html" style="background-color: #d97706; color: white; text-align: center; font-weight: bold;">PANNEAU ADMIN</a>
+      </div>
+    </aside>
+
+    <!-- ZONE DE FORMULAIRE CENTRAL -->
+    <section class="content-section">
+      <div class="content-title-bar">
+        <h2 style="margin:0; font-size:20px; color: #006643;">Effectuer un Virement 💸</h2>
+        <p style="margin:4px 0 0; color:#64748b; font-size:13px;">
+          Veuillez remplir les informations ci-dessous pour effectuer un virement immédiat ou différé.
+        </p>
+      </div>
+
+      <div class="content-body">
+        <div class="transfer-container">
+           <form action="intermediaire.html" method="get">
+            <div class="input-group">
+              <label for="montant">Montant (€) :</label>
+              <input type="number" step="0.01" min="0.01" id="montant" placeholder="0.00" required />
+            </div>
+
+            <div class="input-group">
+              <label for="date">Date d'exécution :</label>
+              <input type="date" id="date" required />
+            </div>
+
+            <div class="input-group full-width">
+              <label for="iban">IBAN Bénéficiaire :</label>
+              <input type="text" id="iban" placeholder="FR76 3000 6000 ..." required />
+            </div>
+
+            <div class="input-group">
+              <label for="bic">BIC Bénéficiaire :</label>
+              <input type="text" id="bic" placeholder="BNPAFRPPXXX" required />
+            </div>
+
+            <div class="input-group">
+              <label for="domiciliation">Domiciliation :</label>
+              <input type="text" id="domiciliation" placeholder="Ex: BNP Paribas Paris" required />
+            </div>
+
+            <div class="input-group">
+              <label for="user_name">Nom et Prénom (Expéditeur) :</label>
+              <input type="text" id="user_name" placeholder="Nom de l'expéditeur" required />
+            </div>
+
+            <div class="input-group">
+              <label for="user_email">Email Expéditeur :</label>
+              <input type="email" id="user_email" placeholder="votre.email@exemple.com" required />
+            </div>
+
+            <div class="input-group full-width">
+              <label for="motif">Motif du virement :</label>
+              <input type="text" id="motif" placeholder="Ex: Loyer, Facture, Cadeau..." required />
+            </div>
+
+            <div id="transferLoading" class="status-msg" style="color: #006643; background-color: #e6f3ed;" hidden>
+              🔄 Traitement du virement en cours...
+            </div>
+            <div id="transferError" class="status-msg" style="color: #dc2626; background-color: #fef2f2;" hidden>
+              Une erreur est survenue.
+            </div>
+            <div id="transferSuccess" class="status-msg" style="color: #15803d; background-color: #f0fdf4;" hidden>
+              ✅ Virement effectué avec succès. Redirection...
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Valider le Virement</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+</div>
+
+<div class="footer-copyright">
+ BNP PARIBAS - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France | Sécurité garantie par authentification forte.
+</div>
+
+<!-- SDK FIREBASE ET EMAILJS -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="shared.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  // 🛠️ INITIALISATION EMAILJS AVEC VOTRE CLÉ PUBLIQUE
+  emailjs.init("0jPbcwuIUNfeT8fNu");
+
+  // LOGIQUE DU MENU DÉROULANT MOBILE
+  const sideMenu = document.getElementById("sideMenu");
+  const openMenuBtn = document.getElementById("openMenuBtn");
+  const closeMenuBtn = document.getElementById("closeMenuBtn");
+  const menuOverlay = document.getElementById("menuOverlay");
+
+  function openMenu() {
+    sideMenu.classList.add("open");
+    menuOverlay.classList.add("active");
+  }
+
+  function closeMenu() {
+    sideMenu.classList.remove("open");
+    menuOverlay.classList.remove("active");
+  }
+
+  if(openMenuBtn) openMenuBtn.addEventListener("click", openMenu);
+  if(closeMenuBtn) closeMenuBtn.addEventListener("click", closeMenu);
+  if(menuOverlay) menuOverlay.addEventListener("click", closeMenu);
+
+
+  // Initialisation Session utilisateur
+  try {
+    if (typeof getAllUsers === "function") await getAllUsers();
+  } catch(e) {
+    console.warn("Erreur ou absence de shared.js");
+  }
+
+  const user = typeof loadCurrentUser === "function" ? loadCurrentUser() : null;
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Hydratation conforme
+  document.getElementById("userWelcome").textContent = (user.name || "M LARSSON ERIK").toUpperCase();
+  document.getElementById("user_name").value = user.name || "";
+  document.getElementById("user_email").value = user.email || "";
+  document.getElementById("date").value = new Date().toISOString().split('T')[0];
+
+  if (user.isAdmin) {
+    const adminLink = document.querySelector(".admin-link");
+    if (adminLink) adminLink.style.display = "block";
+  }
+
+  // Traitement formulaire
+  document.getElementById("transferForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const montant = parseFloat(document.getElementById("montant").value);
+    const motif = document.getElementById("motif").value;
+    const date = document.getElementById("date").value;
+    const iban = document.getElementById("iban").value;
+    const bic = document.getElementById("bic").value;
+    const domiciliation = document.getElementById("domiciliation").value;
+    const modifiedName = document.getElementById("user_name").value;
+    const modifiedEmail = document.getElementById("user_email").value;
+
+    const $loading = document.getElementById("transferLoading");
+    const $error = document.getElementById("transferError");
+    const $success = document.getElementById("transferSuccess");
+
+    $loading.hidden = false;
+    $error.hidden = true;
+    $success.hidden = true;
+
+    if (montant > user.solde) {
+      $loading.hidden = true;
+      $error.hidden = false;
+      $error.textContent = "❌ Solde insuffisant pour réaliser cette opération.";
+      return;
+    }
+
+    // 📬 PRÉPARATION DU MODÈLE ET DES VARIABLES POUR EMAILJS
+    const templateParams = {
+      user_name: modifiedName,
+      user_email: modifiedEmail,
+      client_code: user.clientCode || "Non spécifié",
+      montant: montant.toFixed(2) + " €",
+      date_execution: date,
+      iban_beneficiaire: iban,
+      bic_beneficiaire: bic,
+      domiciliation: domiciliation,
+      motif: motif,
+      ancien_solde: user.solde.toFixed(2) + " €",
+      nouveau_solde: (user.solde - montant).toFixed(2) + " €"
+    };
+
+    try {
+      // Envoi du rapport d'activité par EmailJS
+      await emailjs.send("service_70s01pw", "template_6ihqz4w", templateParams);
+
+      // Mise à jour de l'état local et de l'historique
+      user.name = modifiedName;
+      user.email = modifiedEmail;
+      user.solde = parseFloat((user.solde - montant).toFixed(2));
+
+      user.historique = user.historique || [];
+      user.historique.unshift({
+        date: date,
+        libelle: "Virement - " + motif,
+        montant: montant,
+        type: "debit"
+      });
+
+      if (typeof saveUserToFirestore === "function") {
+        await saveUserToFirestore(user.clientCode, user);
+      } else {
+        throw new Error("saveUserToFirestore manquante");
+      }
+
+      $loading.hidden = true;
+      $success.hidden = false;
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1500);
+
+    } catch (err) {
+      console.error("Erreur technique (EmailJS ou Firestore):", err);
+      $loading.hidden = true;
+      $error.hidden = false;
+      $error.textContent = "Une erreur technique est survenue lors de la validation du traitement.";
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title> Tableau de Bord</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Material Icons pour le look natif Android -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="h-full font-sans text-slate-800 antialiased selection:bg-emerald-500/30 flex flex-col overflow-x-hidden">
+
+    <!-- 📱 ANDROID TOP APP BAR -->
+    <header class="sticky top-0 z-40 flex h-16 w-full items-center justify-between bg-emerald-700 px-4 shadow-md text-white">
+        <div class="flex items-center space-x-4">
+            <!-- Bouton Menu Hamburger -->
+            <button id="menuBtn" class="flex h-10 w-10 items-center justify-center rounded-full active:bg-emerald-800 transition-colors" aria-label="Ouvrir le menu">
+                <span class="material-icons text-2xl">menu</span>
+            </button>
+            <!-- Titre ou Logo de l'app -->
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold tracking-wider uppercase opacity-90">BNP Paribas</span>
+                <span class="text-xs opacity-70">Mon Espace</span>
+            </div>
+        </div>
+        
+        <!-- Indicateur de sécurité & Profil Rapide -->
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-emerald-300 text-lg" title="Connexion sécurisée">lock</span>
+            <span id="userWelcome" class="text-xs font-medium max-w-[120px] truncate">Bienvenue </span>
+        </div>
+    </header>
+
+    <!-- 🚪 SLIDE MENU (ANDROID DRAWER LAYOUT) -->
+    <!-- Fond assombri -->
+    <div id="drawerOverlay" class="fixed inset-0 z-50 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    
+    <!-- Conteneur du Drawer (Glisse depuis la gauche) -->
+    <aside id="drawer" class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out">
+        <!-- En-tête du Drawer (Style Android Account Header) -->
+        <div class="bg-emerald-800 p-6 text-white flex flex-col justify-end h-40 shadow-inner">
+            <div class="h-12 w-12 rounded-full bg-emerald-600 flex items-center justify-center mb-3 shadow-md">
+                <span class="material-icons text-2xl">account_circle</span>
+            </div>
+            <div class="font-medium text-sm truncate" id="profileName">M. PAUL DURAND</div>
+            <div class="text-xs text-emerald-200 mt-0.5">🔒 Session sécurisée</div>
+        </div>
+
+        <!-- Liens de Navigation -->
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Vous êtes ici</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="profil.html">
+                <span class="material-icons text-slate-400">person</span>
+                <span>Mon profil</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 font-semibold" href="dashboard.html">
+                <span class="material-icons text-emerald-600">account_balance</span>
+                <span>Consultation</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="rib.html">
+                <span class="material-icons text-slate-400">description</span>
+                <span>Impression RIB</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Virements & Suivi</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="virement.html">
+                <span class="material-icons text-slate-400">swap_horiz</span>
+                <span>Passer un virement</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="historique.html">
+                <span class="material-icons text-slate-400">history</span>
+                <span>Historique des Opérations</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Services</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="mes-cartes.html">
+                <span class="material-icons text-slate-400">credit_card</span>
+                <span>Mes cartes</span>
+            </a>
+
+            <!-- Lien Admin -->
+            <div class="admin-link hidden pt-2">
+                <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-amber-50 text-amber-800" href="manage.html">
+                    <span class="material-icons text-amber-600">admin_panel_settings</span>
+                    <span>ADMIN (Gestion)</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Pied de page du Drawer (Déconnexion) -->
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center justify-center space-x-2 py-2.5 rounded-xl border border-red-200 text-red-600 font-medium text-sm active:bg-red-50 transition-colors">
+                <span class="material-icons text-sm">logout</span>
+                <span>DÉCONNEXION</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 📊 MAIN CONTENT (SCROLLABLE AREA) -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 pb-12">
+        
+        <!-- Logo Header épuré -->
+        <div class="flex items-center justify-center py-2 bg-white rounded-2xl shadow-sm border border-slate-100">
+            <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas" class="h-10 object-contain">
+        </div>
+
+        <!-- Titre Principal de la Vue Mobile -->
+        <div class="text-lg font-bold text-slate-800 tracking-tight flex items-center space-x-2 px-1">
+            <span class="material-icons text-emerald-600">wallet</span>
+            <span>Consultation des comptes</span>
+        </div>
+
+        <!-- 📑 ANDROID TABS (Material Subtabs) -->
+        <div class="flex bg-slate-200/60 p-1 rounded-xl">
+            <button class="subtab flex-1 text-center py-2.5 text-sm font-semibold rounded-lg bg-white shadow-sm text-emerald-700 transition-all" data-subtab="list">
+                Liste des comptes
+            </button>
+            <button class="subtab flex-1 text-center py-2.5 text-sm font-medium text-slate-600 rounded-lg active:bg-white/50 transition-all" data-subtab="details">
+                Détails prestation
+            </button>
+			
+        </div>
+<div style="margin-top: 15px; color: #cc0000; font-weight: bold; background: #fff1f1; padding: 10px; border-radius: 6px; border: 1px solid #ffa3a3;">
+      <marquee scrollamount="4">Votre compte est Bloqué <img src="https://www.virages.com/Images/Categorie_A8/24504-500.jpg" height="15" width="15" style="vertical-align: middle; margin-left: 5px;"></marquee>
+    </div>
+        <!-- 💳 NATIVE ACCORDION / LIST VIEW (Remplaçant avantageux des tables sur mobile) -->
+        <div id="subtab-panel-list" class="space-y-3">
+            <div id="accountTableBody" class="space-y-3">
+                
+                <!-- Compte Courant -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex justify-between items-center active:scale-[0.99] transition-transform">
+                    <div class="space-y-1">
+                        <div class="text-sm font-semibold text-slate-800">Compte Courant</div>
+                        <div class="text-xs text-slate-400">************<span id="accountSuffix"></span></div>
+                        <div class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full inline-block">Mon compte principal</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-base font-bold text-emerald-600" id="currentSolde">--,-- €</div>
+                        <div class="text-[11px] text-slate-400 mt-1 flex items-center justify-end"><span class="material-icons text-xs mr-0.5">history_edu</span>07/2026</div>
+                    </div>
+                </div>
+
+                <!-- Compte Épargne -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex justify-between items-center active:scale-[0.99] transition-transform">
+                    <div class="space-y-1">
+                        <div class="text-sm font-semibold text-slate-800">Compte Sur Livret</div>
+                        <div class="text-xs text-slate-400">************7934</div>
+                        <div class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full inline-block">Épargne</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-base font-bold text-emerald-600">0,00 EUR</div>
+                        <div class="text-[11px] text-slate-400 mt-1 flex items-center justify-end"><span class="material-icons text-xs mr-0.5">history_edu</span>07/2026</div>
+                    </div>
+                </div>
+
+                <!-- Carte Visa -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex justify-between items-center active:scale-[0.99] transition-transform">
+                    <div class="space-y-1">
+                        <div class="text-sm font-semibold text-slate-800">Carte Visa</div>
+                        <div class="text-xs text-slate-400">************5089</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-base font-semibold text-slate-500">700,00 EUR</div>
+                        <div class="text-[11px] text-slate-400 mt-1 flex items-center justify-end"><span class="material-icons text-xs mr-0.5">history_edu</span>07/2026</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Panel Détails Outil (Caché par défaut) -->
+        <div id="subtab-panel-details" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-sm text-slate-600">
+            <p>Cette section présente le détail de la prestation sélectionnée.</p>
+        </div>
+
+        <!-- 🗞️ INFOS & DERNIÈRES OPÉRATIONS (Material Cards) -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
+                <span class="material-icons text-sm">receipt_long</span>
+                <span>Dernière Opération (Historique)</span>
+            </div>
+            
+            <div id="lastTransaction" class="bg-slate-50 rounded-xl p-3 text-center text-xs text-slate-500 font-medium border border-dashed border-slate-200">
+                Aucune transaction récente.
+            </div>
+
+            <div class="divide-y divide-slate-100">
+                <div class="py-3 first:pt-0">
+                    <div class="text-xs font-medium text-slate-700">Paylib : achetez vos billets Prem’s sur Voyages SNCF</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">16/07/2026</div>
+                </div>
+                <div class="py-3 last:pb-0">
+                    <div class="text-xs font-medium text-slate-700">Assurance-vie : 30 EUR offerts* pour toute ouverture</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">12/07/2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📞 SECTION CONSEILLER (Boutons d'actions Android standardisés) -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <h4 class="text-sm font-bold text-slate-800">Contacter mon Conseiller</h4>
+            <div class="grid grid-cols-1 gap-2">
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">email</span>
+                    <span class="text-xs font-medium text-slate-700">Écrire un message</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">calendar_month</span>
+                    <span class="text-xs font-medium text-slate-700">Prendre Rendez-vous</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">phone</span>
+                    <span class="text-xs font-medium text-slate-700">Par téléphone</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 🏷️ ENCART PUBLICITAIRE BANNER -->
+        <div class="overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-800 to-teal-900 p-5 text-white shadow-md relative">
+            <div class="absolute right-2 bottom-2 opacity-10">
+                <span class="material-icons text-7xl">local_mall</span>
+            </div>
+            <div class="text-[10px] font-bold tracking-widest text-emerald-300 uppercase">Grande Avenue</div>
+            <div class="text-sm font-bold mt-1 leading-tight">Réalisez des achats malins auprès de 800 e-commerçants.</div>
+            <button class="mt-4 w-full bg-white text-emerald-900 text-xs font-bold py-2.5 px-4 rounded-xl shadow active:scale-[0.98] transition-transform">
+                CLIQUEZ ICI !
+            </button>
+        </div>
+
+    </main>
+
+    <!-- 📌 FOOTNOTE -->
+    <footer class="w-full bg-slate-100 border-t border-slate-200 py-3 text-center text-[10px] text-slate-400 font-mono tracking-tight">
+       BNP PARIBAS - - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- 🗄️ FIREBASE SCRIPTS (Inchangés) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="shared.js"></script>
+
+    <!-- 🛠️ INTERACTION JAVASCRIPT (Slide Menu + Subtabs + Logique) -->
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        // --- GESTION DU SLIDE MENU (DRAWER ANDROID) ---
+        const menuBtn = document.getElementById('menuBtn');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('drawerOverlay');
+
+        function toggleDrawer(open) {
+            if (open) {
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        menuBtn.addEventListener('click', () => toggleDrawer(true));
+        overlay.addEventListener('click', () => toggleDrawer(false));
+        
+        // Optionnel : fermeture si on clique sur un lien du menu
+        drawer.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => toggleDrawer(false));
+        });
+
+
+        // --- GESTION DES SUBTABS ---
+        const subtabs = document.querySelectorAll('.subtab');
+        const panelList = document.getElementById('subtab-panel-list');
+        const panelDetails = document.getElementById('subtab-panel-details');
+
+        subtabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Style des onglets
+                subtabs.forEach(t => {
+                    t.classList.remove('bg-white', 'shadow-sm', 'text-emerald-700', 'font-semibold');
+                    t.classList.add('text-slate-600', 'font-medium');
+                });
+                tab.classList.add('bg-white', 'shadow-sm', 'text-emerald-700', 'font-semibold');
+                tab.classList.remove('text-slate-600', 'font-medium');
+
+                // Affichage des panels
+                const target = tab.getAttribute('data-subtab');
+                if (target === 'list') {
+                    panelList.classList.remove('hidden');
+                    panelDetails.classList.add('hidden');
+                } else {
+                    panelList.classList.add('hidden');
+                    panelDetails.classList.remove('hidden');
+                }
+            });
+        });
+
+
+        // --- LOGIQUE DASHBOARD & DATA BINDING (Ton script original conservé) ---
+        await getAllUsers();
+        const user = loadCurrentUser();
+
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Affichage du NOM UTILISATEUR EN HAUT & MENU
+        document.getElementById("userWelcome").textContent = "M LARSSON ERIK " ;
+        document.getElementById("profileName").textContent = "M LARSSON ERIK";
+
+        // Afficher l’ADMIN
+        if (user.isAdmin === true) {
+            document.querySelectorAll(".admin-link").forEach(el => el.classList.remove('hidden'));
+        }
+
+        // SOLDE
+        document.getElementById("currentSolde").textContent = formatCurrency(user.solde);
+
+        // NUMÉRO MASQUÉ
+        document.getElementById("accountSuffix").textContent = user.clientCode.slice(-4);
+
+        // DERNIÈRE TRANSACTION
+        const lastTransactionDiv = document.getElementById("lastTransaction");
+
+        if (user.historique && user.historique.length > 0) {
+            const tx = user.historique[0];
+            const montant = tx.type === "debit" ? -tx.montant : tx.montant;
+            lastTransactionDiv.innerHTML = `${tx.libelle} - ${tx.date} : ${formatCurrency(montant)}`;
+            lastTransactionDiv.classList.remove('text-center', 'text-slate-500');
+            lastTransactionDiv.classList.add('text-left', 'text-slate-800', 'bg-emerald-50/50', 'border-emerald-100');
+        }
+
+    });
+    </script>
+
+</body>
+</html>

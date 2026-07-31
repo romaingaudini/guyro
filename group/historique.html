@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title> Historique</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Material Icons pour le look natif Android -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="h-full font-sans text-slate-800 antialiased selection:bg-emerald-500/30 flex flex-col overflow-x-hidden">
+
+    <!-- 📱 ANDROID TOP APP BAR -->
+    <header class="sticky top-0 z-40 flex h-16 w-full items-center justify-between bg-emerald-700 px-4 shadow-md text-white">
+        <div class="flex items-center space-x-4">
+            <!-- Bouton Menu Hamburger -->
+            <button id="menuBtn" class="flex h-10 w-10 items-center justify-center rounded-full active:bg-emerald-800 transition-colors" aria-label="Ouvrir le menu">
+                <span class="material-icons text-2xl">menu</span>
+            </button>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold tracking-wider uppercase opacity-90">BNP Paribas</span>
+                <span class="text-xs opacity-70">Historique</span>
+            </div>
+        </div>
+        
+        <!-- Code Client en haut -->
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-emerald-300 text-sm">lock</span>
+            <span id="userName" class="text-xs font-medium max-w-[100px] truncate">🔒 Connecté</span>
+        </div>
+    </header>
+
+    <!-- 🚪 SLIDE MENU (ANDROID DRAWER LAYOUT) -->
+    <div id="drawerOverlay" class="fixed inset-0 z-50 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    
+    <aside id="drawer" class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out">
+        <!-- En-tête du Drawer -->
+        <div class="bg-emerald-800 p-6 text-white flex flex-col justify-end h-40 shadow-inner">
+            <div class="h-12 w-12 rounded-full bg-emerald-600 flex items-center justify-center mb-3 shadow-md">
+                <span class="material-icons text-2xl">account_circle</span>
+            </div>
+            <div class="font-medium text-sm truncate" id="drawerProfileName">---</div>
+            <div class="text-xs text-emerald-200 mt-0.5">Code Client : <span id="clientCode">---</span></div>
+        </div>
+
+        <!-- Navigation du Menu -->
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Espace Client</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="profil.html">
+                <span class="material-icons text-slate-400">person</span>
+                <span>Mon profil</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="dashboard.html">
+                <span class="material-icons text-slate-400">account_balance</span>
+                <span>Consultation</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="rib.html">
+                <span class="material-icons text-slate-400">description</span>
+                <span>Impression RIB</span>
+            </a>
+
+            <hr class="border-slate-100 my-2" />
+
+            <div class="text-xs font-semibold text-slate-400 px-3 py-2 uppercase tracking-wider">Virements & Suivi</div>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium text-slate-600 active:bg-slate-100 transition-colors" href="virement.html">
+                <span class="material-icons text-slate-400">swap_horiz</span>
+                <span>Passer un virement</span>
+            </a>
+            <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 font-semibold" href="historique.html">
+                <span class="material-icons text-emerald-600">history</span>
+                <span>Historique des Opérations</span>
+            </a>
+
+            <!-- Lien Admin -->
+            <div class="admin-link hidden pt-2">
+                <a class="flex items-center space-x-4 px-3 py-3 rounded-xl text-sm font-medium bg-amber-50 text-amber-800" href="manage.html">
+                    <span class="material-icons text-amber-600">admin_panel_settings</span>
+                    <span>ADMIN (Gestion)</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Pied du Drawer -->
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center justify-center space-x-2 py-2.5 rounded-xl border border-red-200 text-red-600 font-medium text-sm active:bg-red-50 transition-colors">
+                <span class="material-icons text-sm">logout</span>
+                <span>DÉCONNEXION</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 📊 MAIN CONTENT (SCROLLABLE AREA) -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 pb-12">
+        
+        <!-- Logo -->
+        <div class="flex items-center justify-center py-2 bg-white rounded-2xl shadow-sm border border-slate-100">
+            <img src="https://franceactive-valdoise-yvelines.org/wp-content/uploads/2018/07/bnp-paribas-logo.png" alt="BNP Paribas" class="h-10 object-contain">
+        </div>
+
+        <!-- Titre principal -->
+        <div class="px-1 space-y-1">
+            <div class="text-lg font-bold text-slate-800 tracking-tight flex items-center space-x-2">
+                <span class="material-icons text-emerald-600">receipt_long</span>
+                <span>Historique d'opérations</span>
+            </div>
+            <p class="text-xs italic text-slate-400 leading-relaxed">
+                Retrouvez ci-dessous la liste chronologique de toutes les opérations de votre compte.
+            </p>
+        </div>
+
+        <!-- 🧾 LISTE COMPOSANT HISTORIQUE MOBILE -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <!-- Conteneur pour l'injection dynamique JS -->
+            <div class="divide-y divide-slate-100" id="historyList">
+                
+                <!-- L'en-tête statique HTML d'origine a été retiré car l'affichage mobile utilise des listes auto-explicatives, mais le conteneur accueillera le rendu JS -->
+
+            </div>
+        </div>
+
+        <!-- 📞 SECTION CONSEILLER -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
+                <span class="material-icons text-sm">support_agent</span>
+                <span>Besoin d'aide sur une opération ?</span>
+            </h4>
+            <div class="grid grid-cols-1 gap-2">
+                <a href="#" class="flex items-center space-x-3 p-3 bg-slate-50 active:bg-slate-100 rounded-xl transition-colors">
+                    <span class="material-icons text-emerald-600 text-lg">email</span>
+                    <span class="text-xs font-medium text-slate-700">Écrire à mon conseiller</span>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 📌 FOOTNOTE -->
+    <footer class="w-full bg-slate-100 border-t border-slate-200 py-3 text-center text-[10px] text-slate-400 font-mono tracking-tight">
+         BNP PARIBAS - Le Vesinet - 61 B Bd Carnot, 78110 Le Vésinet, France
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- 🗄️ FIREBASE SCRIPTS (Inchangés) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="shared.js"></script>
+
+    <!-- 🛠️ INTERACTION JAVASCRIPT (Slide Menu + Injection look Mobile) -->
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        // --- GESTION DU SLIDE MENU (DRAWER ANDROID) ---
+        const menuBtn = document.getElementById('menuBtn');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('drawerOverlay');
+
+        function toggleDrawer(open) {
+            if (open) {
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        menuBtn.addEventListener('click', () => toggleDrawer(true));
+        overlay.addEventListener('click', () => toggleDrawer(false));
+
+
+        // --- CHARGEMENT DATA FIREBASE ---
+        await getAllUsers();
+        const user = loadCurrentUser();
+
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Configuration en-tête et drawer
+        document.getElementById("userName").textContent = "M LARSSON ERIK" ;
+        document.getElementById("drawerProfileName").textContent = "M LARSSON ERIK" ;
+        document.getElementById("clientCode").textContent = user.clientCode;
+
+        // Affichage Admin
+        if (user.isAdmin) {
+            document.querySelectorAll(".admin-link").forEach(el => el.classList.remove('hidden'));
+        }
+
+        const historyList = document.getElementById("historyList");
+
+        // Cas vide
+        if (!user.historique || user.historique.length === 0) {
+            historyList.innerHTML = `
+                <div class="p-8 text-center text-xs text-slate-400 font-medium">
+                    <span class="material-icons text-3xl text-slate-300 block mb-2">subtitles_off</span>
+                    Aucune transaction enregistrée sur ce compte.
+                </div>
+            `;
+            return;
+        }
+
+        // Nettoyage initial avant injection pour mobile (évite l'en-tête lourd)
+        historyList.innerHTML = '';
+
+        // --- AFFICHAGE DES LIGNES EN VERSION MOBILE NATIVE ---
+        user.historique.forEach(tx => {
+            const isCredit = tx.type === "credit";
+            
+            // Classes de couleur et signes conformes à Tailwind CSS v4
+            const amountColorClass = isCredit ? "text-emerald-600 font-bold" : "text-slate-800 font-bold";
+            const iconClass = isCredit ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500";
+            const iconName = isCredit ? "north_east" : "south_west";
+            const signe = isCredit ? "+" : "-";
+
+            const row = document.createElement("div");
+            row.className = "flex items-center justify-between p-4 active:bg-slate-50 transition-colors";
+            
+            row.innerHTML = `
+                <div class="flex items-center space-x-3 min-w-0">
+                    <!-- Icône de flux Material Design -->
+                    <div class="h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${iconClass}">
+                        <span class="material-icons text-sm">${iconName}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-semibold text-slate-800 truncate">${tx.libelle}</div>
+                        <div class="text-[10px] text-slate-400 font-medium mt-0.5">${tx.date}</div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 pl-2">
+                    <div class="text-sm ${amountColorClass}">${signe} ${formatCurrency(tx.montant)}</div>
+                </div>
+            `;
+
+            historyList.appendChild(row);
+        });
+    });
+    </script>
+
+</body>
+</html>

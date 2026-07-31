@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Panel de Contrôle & Simulation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+  </style>
+</head>
+<body class="text-slate-800">
+
+<div class="flex min-h-screen">
+
+  <!-- 🧭 SIDEBAR NAVIGATION -->
+  <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shadow-xl">
+    <div class="p-6 text-center border-b border-slate-800">
+      <div class="text-xl font-bold tracking-wider text-sky-400">BNP PARIBAS</div>
+      <span class="text-xs text-slate-500 font-medium uppercase tracking-widest">Espace Simulation</span>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a class="flex items-center gap-3 px-4 py-3 bg-slate-800 text-white rounded-lg font-medium transition-colors" href="manage.html">
+        <span>👤</span> Gérer les Clients
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg font-medium transition-colors" href="dashboard.html">
+        <span>📊</span> Accès Dashboard
+      </a>
+    </nav>
+    <div class="p-4 border-t border-slate-800">
+      <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-950/40 text-red-400 border border-red-900/50 rounded-lg hover:bg-red-900 hover:text-white transition-all text-sm font-medium">
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- 💻 ZONE DE CONTENU -->
+  <main class="flex-1 p-8 overflow-y-auto">
+    
+    <header class="mb-8 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Console d'Administration & Simulation</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Pilotez les comptes, injectez des mouvements et manipulez les données bancaires en temps réel.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="generateFakeIdentity()" class="px-4 py-2 bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-600 hover:text-white text-sm font-medium rounded-xl transition-all">
+          ✨ Générer Identité Aléatoire
+        </button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      
+      <!-- 📝 FORMULAIRE D'ÉDITION CLIENT (PREND 2 COLONNES) -->
+      <div class="xl:col-span-2 space-y-8">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="text-sky-500">✍️</span> Fiche d'Identité et Paramètres du Compte
+            </h2>
+            <span id="editStatusBadge" class="text-xs px-2.5 py-1 bg-amber-50 text-amber-600 rounded-full font-semibold border border-amber-200 hidden">Mode Édition</span>
+          </div>
+
+          <form id="profileForm" class="space-y-6">
+            
+            <!-- Section : Identité civile -->
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Informations Civiles</span>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Nom complet</label>
+                  <input id="p_nom" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="Ex: Jean Dupont" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Code Client (Identifiant)</label>
+                  <input id="p_clientCode" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="Ex: 847392" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Date de naissance</label>
+                  <input id="p_birth" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Adresse e-mail</label>
+                  <input id="p_email" type="email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="jean.dupont@mail.com">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Téléphone</label>
+                  <input id="p_phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="06 12 34 56 78">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Adresse postale</label>
+                  <input id="p_address" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="12 Rue de Paris, 75001">
+                </div>
+              </div>
+            </div>
+
+            <!-- Section : Structure Bancaire -->
+            <div class="pt-4 border-t border-slate-100">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Données Financières & Sécurité</span>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Code Secret App (PIN)</label>
+                  <input id="p_pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="1234" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Solde Initial (€ / $)</label>
+                  <input id="p_balance" type="number" step="0.01" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="5000.00" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Devise</label>
+                  <input id="p_currency" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="EUR" value="EUR">
+                </div>
+                <div class="space-y-1 md:col-span-2">
+                  <label class="text-xs font-semibold text-slate-600">IBAN Compte principal</label>
+                  <input id="p_iban" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="FR76...">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">BIC / SWIFT</label>
+                  <input id="p_bic" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="BNPAFRPPXXX">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Libellé du compte</label>
+                  <input id="p_label" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="Compte Courant Premier">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Agence Bancaire</label>
+                  <input id="p_agency" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="Paris Étoile">
+                </div>
+              </div>
+            </div>
+
+            <!-- Section : Moyens de paiement & Conseiller -->
+            <div class="pt-4 border-t border-slate-100">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Moyens de paiement & Conseiller</span>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Réseau carte</label>
+                  <select id="p_card_type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <option value="">Sélectionner</option>
+                    <option>VISA PREMIER</option>
+                    <option>VISA INFINITE</option>
+                    <option>MASTERCARD GOLD</option>
+                  </select>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Libellé Affiché Carte</label>
+                  <input id="p_card_label" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="M JEAN DUPONT">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Expiration (MM/AA)</label>
+                  <input id="p_expiry" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="12/28">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-slate-600">Nom Conseiller</label>
+                  <input id="p_advisor" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="Mme Catherine Roux">
+                </div>
+                <div class="space-y-1 md:col-span-2">
+                  <label class="text-xs font-semibold text-slate-600">Email Direct Conseiller</label>
+                  <input id="p_advisor_email" type="email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" placeholder="catherine.roux@bnp.com">
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions du Formulaire -->
+            <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
+              <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-all">
+                💾 Sauvegarder le Profil
+              </button>
+              <button type="button" onclick="resetForm()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-xl transition-all">
+                🔄 Vider / Nouveau
+              </button>
+              <button type="button" onclick="deleteUser()" class="px-5 py-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white text-sm font-semibold rounded-xl border border-red-250 transition-all ml-auto">
+                🗑️ Supprimer le client
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 🧪 INJECTEUR DE FLUX & BÉNÉFICIAIRES (VISIBLE UNIQUEMENT QUAND UTILISATEUR SÉLECTIONNÉ) -->
+        <div id="simulationTools" class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-50 pointer-events-none transition-all duration-300">
+          
+          <!-- Bloc Mouvements -->
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div>
+              <h2 class="text-md font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="text-orange-500">📈</span> Injection de Transactions
+              </h2>
+              
+              <!-- Boutons rapides de simulation -->
+              <div class="mb-4">
+                <label class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-2">Simulateurs Prédéfinis</label>
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="quickFillTransaction('Salaire Mensuel', 'credit', 2450)" class="text-xs px-2.5 py-1.5 bg-slate-50 border rounded-lg hover:bg-slate-100">+ Salaire</button>
+                  <button onclick="quickFillTransaction('Prélèvement EDF', 'debit', 84.30)" class="text-xs px-2.5 py-1.5 bg-slate-50 border rounded-lg hover:bg-slate-100">- EDF</button>
+                  <button onclick="quickFillTransaction('Achat carte supermarché', 'debit', 45.12)" class="text-xs px-2.5 py-1.5 bg-slate-50 border rounded-lg hover:bg-slate-100">- CB Alimentaire</button>
+                  <button onclick="quickFillTransaction('Remboursement Mutuelle', 'credit', 32.50)" class="text-xs px-2.5 py-1.5 bg-slate-50 border rounded-lg hover:bg-slate-100">+ Mutuelle</button>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <input id="t_label" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full" placeholder="Libellé de la ligne">
+                <div class="grid grid-cols-2 gap-2">
+                  <select id="t_type" class="bg-slate-50 text-sm border p-2.5 rounded-xl">
+                    <option value="credit">Crédit (+)</option>
+                    <option value="debit">Débit (-)</option>
+                  </select>
+                  <input id="t_amount" type="number" step="0.01" class="bg-slate-50 text-sm border p-2.5 rounded-xl" placeholder="Montant">
+                </div>
+                <input id="t_currency" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full" placeholder="Devise" value="EUR">
+              </div>
+            </div>
+            <button onclick="addTransaction()" class="w-full mt-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-all">
+              ⚡ Injecter au flux
+            </button>
+          </div>
+
+          <!-- Bloc Bénéficiaires -->
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div>
+              <h2 class="text-md font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="text-blue-500">👥</span> Création de Bénéficiaires externés
+              </h2>
+              <div class="space-y-3">
+                <input id="b_name" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full" placeholder="Nom et Prénom du tiers">
+                <input id="b_bank" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full" placeholder="Établissement bancaire cible">
+                <input id="b_iban" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full font-mono text-xs" placeholder="IBAN tiers (FR76...)">
+                <input id="b_bic" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full font-mono text-xs" placeholder="BIC/SWIFT">
+                <textarea id="b_note" class="bg-slate-50 text-sm border p-2.5 rounded-xl w-full h-16 resize-none" placeholder="Commentaire interne client..."></textarea>
+              </div>
+            </div>
+            <button onclick="addBeneficiary()" class="w-full mt-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-all">
+              ➕ Ajouter à la liste
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 👥 INDEX GLOBAL DES COMPTES & HISTORIQUES (1 COLONNE) -->
+      <div class="space-y-8">
+        
+        <!-- Liste de Comptes -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span>🗂️</span> Comptes Existants
+          </h2>
+          <div class="overflow-hidden border border-slate-100 rounded-xl">
+            <div class="max-h-[320px] overflow-y-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead class="bg-slate-50 sticky top-0 border-b border-slate-100 text-slate-500 font-medium">
+                  <tr>
+                    <th class="p-3">Titulaire</th>
+                    <th class="p-3 text-right">Solde</th>
+                    <th class="p-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="userTable" class="divide-y divide-slate-100">
+                  <!-- Injecté par JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visualisateur d'historique en temps réel -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <h3 class="font-bold text-slate-900 text-sm mb-3 uppercase tracking-wider text-slate-400">Flux d'opérations du client</h3>
+          <div class="max-h-[220px] overflow-y-auto border border-slate-50 rounded-xl p-2 bg-slate-50/50">
+            <ul id="txList" class="space-y-2 text-xs">
+              <li class="text-slate-400 italic text-center py-4">Sélectionnez un profil pour inspecter l'historique</li>
+            </ul>
+          </div>
+          
+          <h3 class="font-bold text-slate-900 text-sm mt-6 mb-3 uppercase tracking-wider text-slate-400">Tiers de confiance (Bénéficiaires)</h3>
+          <div class="max-h-[160px] overflow-y-auto border border-slate-50 rounded-xl p-2 bg-slate-50/50">
+            <ul id="benefList" class="space-y-2 text-xs">
+              <li class="text-slate-400 italic text-center py-4">Aucun bénéficiaire enregistré</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- SDK FIREBASE DE L'APPLICATION -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="shared.js"></script>
+
+<script>
+let selectedUser = null;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    if (typeof getAllUsers === "function") await getAllUsers();
+  } catch(e) { console.error("Erreur chargement shared.js"); }
+
+  const admin = typeof loadCurrentUser === "function" ? loadCurrentUser() : null;
+  if (!admin || !admin.isAdmin) {
+    alert("Accès refusé - Droits administrateurs requis.");
+    location.href = "index.html";
+    return;
+  }
+  loadUserTable();
+});
+
+// ✅ RECONSTRUCTION DU TABLEAU ADMIN
+function loadUserTable() {
+  const users = JSON.parse(localStorage.getItem("DATA") || "[]");
+  const tbody = document.getElementById("userTable");
+  tbody.innerHTML = "";
+
+  if(users.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 italic">Aucun client en base de données.</td></tr>`;
+    return;
+  }
+
+  users.forEach(u => {
+    if(u.isAdmin) return; // Ignore l'affichage de l'admin lui-même
+    
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-slate-50/80 transition-colors";
+    
+    const soldeFormate = typeof formatCurrency === "function" ? formatCurrency(u.solde) : (u.solde || 0) + " " + (u.devise || "EUR");
+    
+    tr.innerHTML = `
+      <td class="p-3 font-medium text-slate-900">
+        <div>${u.nom || 'Sans nom'}</div>
+        <div class="text-xs text-slate-400 font-mono">ID: ${u.clientCode}</div>
+      </td>
+      <td class="p-3 text-right font-mono font-semibold text-slate-700">${soldeFormate}</td>
+      <td class="p-3 text-center">
+        <button onclick="selectUser('${u.clientCode}')" class="px-2.5 py-1.5 bg-slate-100 text-slate-700 font-medium text-xs rounded-lg hover:bg-sky-600 hover:text-white transition-all shadow-sm">
+          Gérer
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ✅ SÉLECTION DE CELLULE CLIENT
+function selectUser(code) {
+  const users = JSON.parse(localStorage.getItem("DATA") || "[]");
+  selectedUser = users.find(u => u.clientCode === code);
+
+  if(!selectedUser) return;
+
+  // Remplissage récursif des champs input du profil
+  document.getElementById("p_nom").value = selectedUser.nom || "";
+  document.getElementById("p_clientCode").value = selectedUser.clientCode || "";
+  document.getElementById("p_birth").value = selectedUser.dateNaissance || selectedUser.birth || "";
+  document.getElementById("p_pin").value = selectedUser.pin || "";
+  document.getElementById("p_email").value = selectedUser.email || "";
+  document.getElementById("p_phone").value = selectedUser.phone || "";
+  document.getElementById("p_address").value = selectedUser.adresse || "";
+  document.getElementById("p_advisor").value = selectedUser.conseiller || "";
+  document.getElementById("p_advisor_email").value = selectedUser.emailConseiller || "";
+  document.getElementById("p_balance").value = selectedUser.solde || 0;
+  document.getElementById("p_currency").value = selectedUser.devise || "EUR";
+  document.getElementById("p_label").value = selectedUser.libelleCompte || "";
+  document.getElementById("p_agency").value = selectedUser.agence || "";
+  
+  if (selectedUser.rib) {
+    document.getElementById("p_iban").value = selectedUser.rib.iban || "";
+    document.getElementById("p_bic").value = selectedUser.rib.bic || "";
+  }
+  if (selectedUser.carte) {
+    document.getElementById("p_card_type").value = selectedUser.carte.type || "";
+    document.getElementById("p_card_label").value = selectedUser.carte.label || "";
+    document.getElementById("p_expiry").value = selectedUser.carte.expiration || "";
+  }
+
+  // Activation visuelle des outils de simulation d'écritures
+  const simTools = document.getElementById("simulationTools");
+  simTools.classList.remove("opacity-50", "pointer-events-none");
+  document.getElementById("editStatusBadge").classList.remove("hidden");
+
+  // Rendu de l'historique
+  const txList = document.getElementById("txList");
+  if (selectedUser.historique && selectedUser.historique.length > 0) {
+    txList.innerHTML = selectedUser.historique.map(tx => {
+      const isCredit = tx.type === "credit";
+      return `
+        <li class="flex justify-between items-center p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+          <div>
+            <span class="font-medium text-slate-800">${tx.libelle}</span>
+            <div class="text-[10px] text-slate-400">${tx.date || ''}</div>
+          </div>
+          <span class="font-mono font-bold ${isCredit ? 'text-emerald-600' : 'text-rose-600'}">
+            ${isCredit ? '+' : '-'}${tx.montant} ${tx.devise || 'EUR'}
+          </span>
+        </li>`;
+    }).join("");
+  } else {
+    txList.innerHTML = `<li class="text-slate-400 italic text-center py-4">Aucun mouvement sur ce compte.</li>`;
+  }
+
+  // Rendu des bénéficiaires
+  const benefList = document.getElementById("benefList");
+  if (selectedUser.beneficiaires && selectedUser.beneficiaires.length > 0) {
+    benefList.innerHTML = selectedUser.beneficiaires.map(b => `
+      <li class="p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+        <div class="font-medium text-slate-800">${b.nom}</div>
+        <div class="text-[10px] text-slate-400 font-mono">${b.iban} (${b.banque || 'Tiers'})</div>
+      </li>`).join("");
+  } else {
+    benefList.innerHTML = `<li class="text-slate-400 italic text-center py-2">Aucun tiers de confiance.</li>`;
+  }
+}
+
+// ✅ CRÉATION ET MISE À JOUR GLOBAL DE LA BASE DE DONNÉES
+document.getElementById("profileForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const user = {
+    nom: document.getElementById("p_nom").value,
+    clientCode: document.getElementById("p_clientCode").value,
+    pin: document.getElementById("p_pin").value,
+    email: document.getElementById("p_email").value,
+    phone: document.getElementById("p_phone").value,
+    adresse: document.getElementById("p_address").value,
+    conseiller: document.getElementById("p_advisor").value,
+    emailConseiller: document.getElementById("p_advisor_email").value,
+    solde: parseFloat(document.getElementById("p_balance").value),
+    devise: document.getElementById("p_currency").value,
+    libelleCompte: document.getElementById("p_label").value,
+    agence: document.getElementById("p_agency").value,
+    rib: { 
+      iban: document.getElementById("p_iban").value, 
+      bic: document.getElementById("p_bic").value 
+    },
+    carte: { 
+      type: document.getElementById("p_card_type").value, 
+      expiration: document.getElementById("p_expiry").value, 
+      label: document.getElementById("p_card_label").value 
+    },
+    historique: selectedUser?.historique || [],
+    beneficiaires: selectedUser?.beneficiaires || [],
+    isAdmin: false
+  };
+
+  if(typeof saveUserToFirestore === "function") {
+    await saveUserToFirestore(user.clientCode, user);
+    alert("🔥 Structure synchronisée dans Firestore avec succès !");
+    location.reload();
+  } else {
+    alert("Erreur : La fonction d'écriture Firestore est manquante.");
+  }
+});
+
+// ✅ INJECTEUR AUTOMATIQUE DE VALEURS RAPIDES
+function quickFillTransaction(label, type, amount) {
+  document.getElementById("t_label").value = label;
+  document.getElementById("t_type").value = type;
+  document.getElementById("t_amount").value = amount;
+}
+
+// ✅ AJOUT D'UNE TRANSACTION SIMULÉE
+async function addTransaction() {
+  if (!selectedUser) return;
+  
+  const amountValue = parseFloat(document.getElementById("t_amount").value);
+  const typeValue = document.getElementById("t_type").value;
+
+  selectedUser.historique = selectedUser.historique || [];
+  selectedUser.historique.unshift({
+    libelle: document.getElementById("t_label").value || "Achat Magasin",
+    type: typeValue,
+    montant: amountValue,
+    devise: document.getElementById("t_currency").value || "EUR",
+    date: new Date().toLocaleDateString('fr-FR')
+  });
+
+  // Mise à jour arithmétique automatique du solde client global
+  if(typeValue === "credit") {
+    selectedUser.solde = parseFloat((selectedUser.solde + amountValue).toFixed(2));
+  } else {
+    selectedUser.solde = parseFloat((selectedUser.solde - amountValue).toFixed(2));
+  }
+
+  await saveUserToFirestore(selectedUser.clientCode, selectedUser);
+  alert("⚡ Flux monétaire injecté.");
+  selectUser(selectedUser.clientCode);
+  loadUserTable();
+}
+
+// ✅ SIMULATION D'UN BÉNÉFICIAIRE TIERS
+async function addBeneficiary() {
+  if (!selectedUser) return;
+
+  selectedUser.beneficiaires = selectedUser.beneficiaires || [];
+  selectedUser.beneficiaires.push({
+    nom: document.getElementById("b_name").value,
+    banque: document.getElementById("b_bank").value,
+    iban: document.getElementById("b_iban").value,
+    bic: document.getElementById("b_bic").value,
+    note: document.getElementById("b_note").value
+  });
+
+  await saveUserToFirestore(selectedUser.clientCode, selectedUser);
+  alert("👥 Lien interbancaire créé.");
+  selectUser(selectedUser.clientCode);
+}
+
+// ✅ FAUSSE DÉCLARATION D'IDENTITÉ POUR TEST RAPIDE
+function generateFakeIdentity() {
+  const names = ["Marc Vasseur", "Sophie Lemaire", "Thomas Dubois", "Élodie Martinez"];
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  document.getElementById("p_nom").value = randomName;
+  document.getElementById("p_clientCode").value = randomCode;
+  document.getElementById("p_pin").value = Math.floor(1000 + Math.random() * 9000).toString();
+  document.getElementById("p_balance").value = (Math.random() * 12000).toFixed(2);
+  document.getElementById("p_iban").value = "FR7630006000012345678901" + Math.floor(10 + Math.random() * 89);
+  document.getElementById("p_bic").value = "BNPAFRPPXXX";
+  document.getElementById("p_card_label").value = "M. " + randomName.toUpperCase();
+  document.getElementById("p_expiry").value = "09/29";
+  document.getElementById("p_agency").value = "Simulation Digitale";
+}
+
+function resetForm() {
+  document.getElementById("profileForm").reset();
+  selectedUser = null;
+  document.getElementById("simulationTools").classList.add("opacity-50", "pointer-events-none");
+  document.getElementById("editStatusBadge").classList.add("hidden");
+  document.getElementById("txList").innerHTML = `<li class="text-slate-400 italic text-center py-4">Sélectionnez un profil pour inspecter l'historique</li>`;
+  document.getElementById("benefList").innerHTML = `<li class="text-slate-400 italic text-center py-4">Aucun bénéficiaire enregistré</li>`;
+}
+
+async function deleteUser() {
+  if (!selectedUser) return;
+  if (!confirm("⚠️ Confirmer la suppression totale de ce compte simulé ?")) return;
+  
+  if(typeof deleteUserFromFirestore === "function") {
+    await deleteUserFromFirestore(selectedUser.clientCode);
+    alert("Profil purgé.");
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
